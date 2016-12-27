@@ -1,8 +1,11 @@
 package com.github.ljarka.filterbottomsheet;
 
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 
 interface ViewDragHelperDelegate {
+
+    void ifEmpty(@NonNull Runnable runnable);
 
     boolean shouldInterceptTouchEvent(MotionEvent event);
 

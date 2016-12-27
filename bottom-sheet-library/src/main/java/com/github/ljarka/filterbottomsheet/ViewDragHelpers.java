@@ -23,6 +23,11 @@ final class ViewDragHelpers {
     private static class EmptyViewDragHelperDelegate implements ViewDragHelperDelegate {
 
         @Override
+        public void ifEmpty(@NonNull Runnable runnable) {
+            runnable.run();
+        }
+
+        @Override
         public boolean shouldInterceptTouchEvent(MotionEvent event) {
             return false;
         }
@@ -62,6 +67,10 @@ final class ViewDragHelpers {
 
         private ViewDragHelperWrapper(@NonNull ViewDragHelper viewDragHelper) {
             this.viewDragHelper = checkNotNull(viewDragHelper);
+        }
+
+        @Override
+        public void ifEmpty(@NonNull Runnable runnable) {
         }
 
         @Override
