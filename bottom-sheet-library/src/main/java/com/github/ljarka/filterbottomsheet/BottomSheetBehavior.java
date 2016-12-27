@@ -158,10 +158,8 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
         } else if (mState == STATE_COLLAPSED) {
             ViewCompat.offsetTopAndBottom(child, mMaxOffset);
         }
-        if (mViewDragHelperDelegate == null) {
-            mViewDragHelperDelegate = ViewDragHelpers.wrap(ViewDragHelper.create(parent,
-                    new CustomDragHelperCallback(child)));
-        }
+        mViewDragHelperDelegate.ifEmpty(() -> mViewDragHelperDelegate =
+                ViewDragHelpers.wrap(ViewDragHelper.create(parent, new CustomDragHelperCallback(child))));
         mViewRef = new WeakReference<>(child);
         mNestedScrollingChildRef = new WeakReference<>(findScrollingChild(child));
         return true;
