@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
@@ -451,20 +452,23 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
         }
         mState = state;
         View bottomSheet = mViewRef.get();
+
+        notifyStateChangedToListeners(bottomSheet, state);
+    }
+
+    private void notifyStateChangedToListeners(@Nullable View bottomSheet, @State int newState) {
         if (bottomSheet != null && mCallback != null) {
-            notifyStateChangedToListeners(bottomSheet, state);
+            for (BottomSheetCallback bottomSheetCallback : mCallback) {
+                bottomSheetCallback.onStateChanged(bottomSheet, newState);
+            }
         }
     }
 
-    private void notifyStateChangedToListeners(@NonNull View bottomSheet, @State int newState) {
-        for (BottomSheetCallback bottomSheetCallback : mCallback) {
-            bottomSheetCallback.onStateChanged(bottomSheet, newState);
-        }
-    }
-
-    private void notifyOnSlideToListeners(@NonNull View bottomSheet, float slideOffset) {
-        for (BottomSheetCallback bottomSheetCallback : mCallback) {
-            bottomSheetCallback.onSlide(bottomSheet, slideOffset);
+    private void notifyOnSlideToListeners(@Nullable View bottomSheet, float slideOffset) {
+        if (bottomSheet != null && mCallback != null) {
+            for (BottomSheetCallback bottomSheetCallback : mCallback) {
+                bottomSheetCallback.onSlide(bottomSheet, slideOffset);
+            }
         }
     }
 
@@ -583,12 +587,10 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
     private void dispatchOnSlide(int top, BottomSheetView bottomSheetView) {
         animateTitle(bottomSheetView, top);
         View bottomSheet = mViewRef.get();
-        if (bottomSheet != null && mCallback != null) {
-            if (top > mMaxOffset) {
-                notifyOnSlideToListeners(bottomSheet, (float) (mMaxOffset - top) / mPeekHeight);
-            } else {
-                notifyOnSlideToListeners(bottomSheet, (float) (mMaxOffset - top) / ((mMaxOffset - mMinOffset)));
-            }
+        if (top > mMaxOffset) {
+            notifyOnSlideToListeners(bottomSheet, (float) (mMaxOffset - top) / mPeekHeight);
+        } else {
+            notifyOnSlideToListeners(bottomSheet, (float) (mMaxOffset - top) / ((mMaxOffset - mMinOffset)));
         }
     }
 
