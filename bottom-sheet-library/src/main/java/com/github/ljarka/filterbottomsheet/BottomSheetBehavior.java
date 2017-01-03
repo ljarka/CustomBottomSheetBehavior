@@ -95,6 +95,7 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
     private boolean isMovingDown = false;
     private boolean isTouchingButton = false;
     private boolean enableInternalScrollingInAnchorPointState;
+    private boolean isInit = false;
 
     public BottomSheetBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -163,6 +164,7 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
                 ViewDragHelpers.wrap(ViewDragHelper.create(parent, new CustomDragHelperCallback(child))));
         mViewRef = new WeakReference<>(child);
         mNestedScrollingChildRef = new WeakReference<>(findScrollingChild(child));
+        isInit = true;
         return true;
     }
 
@@ -179,7 +181,7 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
             lastTouchY = event.getY();
         }
 
-        if (!child.isShown()) {
+        if (!child.isShown() || !isInit) {
             return false;
         }
         // Record the velocity
@@ -233,7 +235,7 @@ public class BottomSheetBehavior extends CoordinatorLayout.Behavior<BottomSheetV
 
     @Override
     public boolean onTouchEvent(CoordinatorLayout parent, BottomSheetView child, MotionEvent event) {
-        if (!child.isShown()) {
+        if (!child.isShown() || !isInit) {
             return false;
         }
         int action = MotionEventCompat.getActionMasked(event);
