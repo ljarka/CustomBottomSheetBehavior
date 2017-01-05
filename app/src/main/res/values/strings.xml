@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">CustomBottomSheetBehavior</string>
     <string name="show_results_button">Show results</string>
-    <string name="button_title">Filtruj i sortuj</string>
+    <string name="button_title">Filter</string>
 </resources>
