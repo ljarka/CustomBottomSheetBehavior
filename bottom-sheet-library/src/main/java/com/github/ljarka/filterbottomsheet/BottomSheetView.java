@@ -50,8 +50,8 @@ public class BottomSheetView extends NestedScrollView {
     private int appBarTextTopDistance;
     private float appBarTextSize;
     private float textScaleValue;
-    private ViewInstanceStateKeeper<Bundle> viewInstanceStateKeeper = new ViewInstanceStateKeeper<>();
-    private ArgbEvaluatorCompat argbEvaluator = new ArgbEvaluatorCompat();
+    private final ViewInstanceStateKeeper<Bundle> viewInstanceStateKeeper = new ViewInstanceStateKeeper<>();
+    private final ArgbEvaluatorCompat argbEvaluator = new ArgbEvaluatorCompat();
 
     public BottomSheetView(Context context) {
         super(context);
