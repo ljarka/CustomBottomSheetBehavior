@@ -21,4 +21,10 @@
         <attr name="fadeInBehaviorAnchorPoint" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="BottomSheetView">
+        <attr name="buttonTitle" format="string" />
+        <attr name="buttonTextColor" format="color" />
+        <attr name="buttonBackgroundColor" format="color" />
+    </declare-styleable>
+
 </resources>

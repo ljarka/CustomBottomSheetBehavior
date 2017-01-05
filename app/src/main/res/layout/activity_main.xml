@@ -59,6 +59,9 @@
             android:background="@android:color/white"
             app:anchorPoint="@dimen/anchor_point"
             app:behavior_peekHeight="@dimen/peek_height"
+            app:buttonBackgroundColor="@android:color/darker_gray"
+            app:buttonTextColor="@color/colorAccent"
+            app:buttonTitle="@string/button_title"
             app:enableInternalScrollingInAnchorPointState="true"
             app:layout_behavior="@string/ThreePhasesBottomSheetBehavior">
 

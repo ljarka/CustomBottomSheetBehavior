@@ -1,6 +1,7 @@
 package com.github.ljarka.filterbottomsheet;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -33,14 +34,16 @@ public class BottomSheetView extends NestedScrollView {
 
     private static final String BOTTOM_SHEET_STATE = "bottom_sheet_state";
 
-    private static final int MAX_PERCENT = 100;
+    private static final float MAX_PERCENT = 100f;
     private static final int MAX_HEX = 255;
     private RelativeLayout bottomSheetContainer;
     private TextView bottomSheetTitle;
     private ViewGroup titleContainer;
     private View titleBackground;
     private BottomSheetBehavior layoutBehavior;
-    private int bottomSheetTitleBackgroundColor;
+    private int titleBackgroundColor;
+    private int titleTextColor;
+    private int toolbarTextColor = Color.BLACK;
     private int maxHorizontalTextTranslation = -1;
     private int maxVerticalTranslation = -1;
     private int appBarTextLeftDistance;
@@ -48,6 +51,7 @@ public class BottomSheetView extends NestedScrollView {
     private float appBarTextSize;
     private float textScaleValue;
     private ViewInstanceStateKeeper<Bundle> viewInstanceStateKeeper = new ViewInstanceStateKeeper<>();
+    private ArgbEvaluatorCompat argbEvaluator = new ArgbEvaluatorCompat();
 
     public BottomSheetView(Context context) {
         super(context);
@@ -57,6 +61,22 @@ public class BottomSheetView extends NestedScrollView {
     public BottomSheetView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
+
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.BottomSheetView,
+                0, 0);
+
+        try {
+            bottomSheetTitle.setText(typedArray.getString(R.styleable.BottomSheetView_buttonTitle));
+            titleBackgroundColor = typedArray.getColor(R.styleable.BottomSheetView_buttonBackgroundColor,
+                    ContextCompat.getColor(context, R.color.bottomSheetTitleBackground));
+            titleBackground.setBackgroundColor(titleBackgroundColor);
+            titleTextColor = typedArray.getColor(R.styleable.BottomSheetView_buttonTextColor, Color.WHITE);
+            bottomSheetTitle.setTextColor(titleTextColor);
+        } finally {
+            typedArray.recycle();
+        }
     }
 
     private void init(Context context) {
@@ -65,8 +85,7 @@ public class BottomSheetView extends NestedScrollView {
         bottomSheetTitle = (TextView) findViewById(R.id.bottom_sheet_title);
         titleContainer = (ViewGroup) findViewById(R.id.title_container);
         titleBackground = findViewById(R.id.title_background);
-        bottomSheetTitleBackgroundColor = ContextCompat.getColor(context, R.color.bottomSheetTitleBackground);
-        titleBackground.setBackgroundColor(bottomSheetTitleBackgroundColor);
+        titleBackground.setBackgroundColor(titleBackgroundColor);
         bottomSheetTitle.setTextColor(Color.WHITE);
         titleContainer.setOnClickListener(v -> onTitleContainerClick());
     }
@@ -192,7 +211,7 @@ public class BottomSheetView extends NestedScrollView {
     }
 
     public void animateBackgroundColor(float alphaInPercent) {
-        titleBackground.setBackgroundColor(ColorUtils.setAlphaComponent(bottomSheetTitleBackgroundColor, convertPercentToHex
+        titleBackground.setBackgroundColor(ColorUtils.setAlphaComponent(titleBackgroundColor, convertPercentToHex
                 (alphaInPercent)));
     }
 
@@ -202,8 +221,8 @@ public class BottomSheetView extends NestedScrollView {
     }
 
     public void animateTextColor(float colorChangePercent) {
-        int hexColorValue = convertPercentToHex(colorChangePercent);
-        bottomSheetTitle.setTextColor(Color.rgb(hexColorValue, hexColorValue, hexColorValue));
+        int color = (int) argbEvaluator.evaluate((colorChangePercent / MAX_PERCENT), toolbarTextColor, titleTextColor);
+        bottomSheetTitle.setTextColor(color);
     }
 
     @IntRange(from = 0x0, to = 0xFF)
